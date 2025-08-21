@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "python bot.py",
     "test": "node whatsapp.js"
   },
   "keywords": [],

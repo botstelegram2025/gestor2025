@@ -66,6 +66,23 @@ def enviar(update: Update, context: CallbackContext):
     subprocess.run(["node", "whatsapp.js", cliente.telefone, mensagem])
     update.message.reply_text(f"Mensagem enviada para {cliente.nome}.")
 
+
+def enviar_todos(update: Update, context: CallbackContext):
+    """Uso: /enviartodos Mensagem"""
+    if not context.args:
+        update.message.reply_text("Uso: /enviartodos Mensagem")
+        return
+    session = Session()
+    clientes = session.query(Cliente).all()
+    if not clientes:
+        update.message.reply_text("Nenhum cliente cadastrado.")
+        return
+    mensagem = " ".join(context.args)
+    for cliente in clientes:
+        subprocess.run(["node", "whatsapp.js", cliente.telefone, mensagem])
+    update.message.reply_text(
+        f"Mensagem enviada para {len(clientes)} clientes.")
+
 def main():
     token = os.getenv("TELEGRAM_BOT_TOKEN")
     updater = Updater(token)
@@ -75,6 +92,7 @@ def main():
     dp.add_handler(CommandHandler("addcliente", add_cliente))
     dp.add_handler(CommandHandler("listarclientes", listar_clientes))
     dp.add_handler(CommandHandler("enviar", enviar))
+    dp.add_handler(CommandHandler("enviartodos", enviar_todos))
 
     updater.start_polling()
     updater.idle()
