@@ -13,6 +13,7 @@ import threading
 import time
 from datetime import datetime, timedelta
 import pytz
+from typing import Optional, Dict, Any, List
 
 # Dependências externas do sistema
 from database import DatabaseManager
@@ -64,24 +65,25 @@ class TelegramBot:
         self.base_url = f"https://api.telegram.org/bot{token}"
 
         # Instâncias dos serviços
-        self.db: DatabaseManager | None = None
-        self.template_manager: TemplateManager | None = None
-        self.baileys_api: BaileysAPI | None = None
-        self.scheduler: SimpleScheduler | None = None
-        self.user_manager: UserManager | None = None
-        self.mercado_pago: MercadoPagoIntegration | None = None
-        self.schedule_config: ScheduleConfig | None = None
+        self.db: Optional[DatabaseManager] = None
+        self.template_manager: Optional[TemplateManager] = None
+        self.baileys_api: Optional[BaileysAPI] = None
+        self.scheduler: Optional[SimpleScheduler] = None
+        self.user_manager: Optional[UserManager] = None
+        self.mercado_pago: Optional[MercadoPagoIntegration] = None
+        self.schedule_config: Optional[ScheduleConfig] = None
 
         # Estado das conversações
-        self.conversation_states: dict = {}
-        self.user_data: dict = {}
-        self.user_states: dict = {}
+        self.conversation_states: Dict[str, Any] = {}
+        self.user_data: Dict[str, Any] = {}
+        self.user_states: Dict[str, Any] = {}
 
-    def send_message(self, chat_id: int, text: str, parse_mode: str | None = None, reply_markup: dict | None = None) -> dict | None:
+    def send_message(self, chat_id: int, text: str, parse_mode: Optional[str] = None,
+                     reply_markup: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
         """Envia mensagem via API HTTP"""
         try:
             url = f"{self.base_url}/sendMessage"
-            data: dict[str, object] = {
+            data: Dict[str, Any] = {
                 "chat_id": chat_id,
                 "text": text,
             }
@@ -99,7 +101,7 @@ class TelegramBot:
 
     def initialize_services(self) -> bool:
         """Inicializa os serviços do bot"""
-        services_failed: list[str] = []
+        services_failed: List[str] = []
         try:
             self.db = DatabaseManager()
             self.user_manager = UserManager(self.db)
@@ -125,7 +127,7 @@ class TelegramBot:
         pass
 
 # Instância global do bot
-telegram_bot: TelegramBot | None = None
+telegram_bot: Optional[TelegramBot] = None
 
 
 def initialize_bot() -> bool:
