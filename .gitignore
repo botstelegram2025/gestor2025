@@ -1,0 +1,4 @@
+node_modules/
+clientes.db
+baileys_auth_info/
+__pycache__/
