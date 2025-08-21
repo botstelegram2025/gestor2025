@@ -1,3 +1,4 @@
+// Requires an authenticated session; on first run, a QR code will be shown for login.
 const { default: makeWASocket, useMultiFileAuthState } = require('@whiskeysockets/baileys');
 
 async function sendMessage(number, message) {
